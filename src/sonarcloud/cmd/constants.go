@@ -69,6 +69,7 @@ const (
 	Vulnerabilities
 )
 
+// MetricName maps integer constants to expected Sonar string name
 var MetricName = map[int]string{
 	0:  "bugs",
 	1:  "code_smells",
