@@ -29,7 +29,7 @@ type PagingObject struct {
 	Index int `json:"pageIndex"`
 
 	// Size elements on this page
-	size int `json:"pageSize"`
+	Size int `json:"pageSize"`
 
 	// Total number of pages
 	Total int `json:"total"`
