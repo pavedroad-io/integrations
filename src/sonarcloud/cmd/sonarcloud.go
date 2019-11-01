@@ -5,7 +5,7 @@
 //		projects
 //		tokens
 //		metrics
-//		qaulity gates
+//		quality gates
 package sonarcloud
 
 import (
@@ -201,7 +201,7 @@ func (c *sonarcloudclient) New(token string) error {
 }
 
 // GetProject
-// TODO make this a vardic fucntion taking a list of project names
+// TODO make this a vardic function taking a list of project names
 func (c *sonarcloudclient) GetProject(org, name string) (*http.Response, error) {
 	options := "?"
 	options += fmt.Sprintf(Projects, name)

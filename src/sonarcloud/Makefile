@@ -87,10 +87,9 @@ go-clean:
 	@echo "  >  Cleaning build cache"
 	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
 
-# TODO: enable sonar scanner once we get API key
-# check: lint sonar-scanner $(ARTIFACTS) $(LOGS) $(ASSETS) $(DOCS)
+# check: lint $(ARTIFACTS) $(LOGS) $(ASSETS) $(DOCS)
+check: lint sonar-scanner $(ARTIFACTS) $(LOGS) $(ASSETS) $(DOCS)
 ## check: Start services and execute static code analysis and tests
-check: lint $(ARTIFACTS) $(LOGS) $(ASSETS) $(DOCS)
 	@echo "  >  running to tests..."
 	go test -coverprofile=$(GOCOVERAGE) -v ./...
 
