@@ -1,4 +1,4 @@
-// Package sonarcloud
+// Package sonarcloud API
 package sonarcloud
 
 // Constants used in URI and query parameters
@@ -35,12 +35,13 @@ const (
 	QualityGate = DefaultAPI + "/project_badges/quality_gate"
 
 	// Query parameter strings
+	Branch       = "branch=%s"
+	Login        = "login=%s"
+	Metric       = "metric=%s"
+	Name         = "name=%s"
 	Organization = "organization=%s"
 	Project      = "project=%s"
 	Projects     = "projects=%s"
-	Metric       = "metric=%s"
-	Name         = "name=%s"
-	Login        = "login=%s"
 
 	// KeyPrefix to append to SonarCloud Key to ensure uniqueness
 	KeyPrefix = "PavedRoad_"
@@ -52,3 +53,32 @@ const (
 	visibility  = "public"
 	tokenName   = "userTestToken123"
 )
+
+// Valid metric types
+const (
+	Bugs = iota
+	CodeSmells
+	Coverage
+	DuplicatedLinesDensity
+	Ncloc
+	SqaleRating
+	AlertStatus
+	ReliabilityRating
+	SecurityRating
+	SqaleIndex
+	Vulnerabilities
+)
+
+var MetricName = map[int]string{
+	0:  "bugs",
+	1:  "code_smells",
+	2:  "coverage",
+	3:  "duplicated_lines_density",
+	4:  "ncloc",
+	5:  "sqale_rating",
+	6:  "alert_status",
+	7:  "reliability_rating",
+	8:  "security_rating",
+	9:  "sqale_index",
+	10: "vulnerabilities",
+}

@@ -1,8 +1,14 @@
-// Package sonarcloud
+// Package sonarcloud API wrapper
+//
+// Provides a basic wrapper for the SonarCloud API
+//   Support is limited to:
+//		projects
+//		tokens
+//		metrics
+//		qaulity gates
 package sonarcloud
 
 import (
-	"crypto/tls"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -56,8 +62,8 @@ type ComponentsObject struct {
 	Revision string `json:"revision"`
 }
 
-// NewProject
-//   Used to create a new project
+// NewProject Used to create a new project
+//
 type NewProject struct {
 	// Organization (required) is a valid SonarCloud organization
 	Organization string `json:"organization"`
@@ -79,8 +85,8 @@ type NewProjectResponse struct {
 	Project NewProjectResponseObject `json:"project"`
 }
 
-// NewProjectResponse
-//   Used to create a new project
+// NewProjectResponseObject Object include in response
+//
 type NewProjectResponseObject struct {
 	// Key
 	Key string `json:"key"`
@@ -129,8 +135,7 @@ type NewTokenResponse struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-// GetTokenResponse
-// user_tokens/search returns a user and
+// GetTokenResponse user_tokens/search returns a user and
 // a list of their tokens
 type GetTokenResponse struct {
 	// Login name of user
@@ -169,13 +174,8 @@ func (e *sonarCloudError) Error() string {
 //	 if must have admin access
 func (c *sonarcloudclient) New(token string) error {
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-
 	c.Client = &http.Client{
-		Timeout:   10 * time.Second,
-		Transport: tr,
+		Timeout: 10 * time.Second,
 	}
 
 	if c.Host == "" {
@@ -348,6 +348,66 @@ func (c *sonarcloudclient) GetTokens(name string) (*http.Response, error) {
 	} else {
 		url = c.URI + TokenSearch
 	}
+
+	req, err := http.NewRequest("GET", url, nil)
+	resp, err := c.Client.Do(req)
+
+	if err != nil {
+		fmt.Println("Error is ", err)
+		return resp, err
+	}
+
+	return resp, nil
+}
+
+// GetMetric(metric, branch string)
+// Return an SVG badge for inclussion in HTML
+//
+// 	metric (required) is one of the following constants:
+//    Bugs
+//		CodeSmells
+//		Coverage
+//		DuplicatedLinesDensity
+//		Ncloc
+//		SqaleRating
+//		AlertStatus
+//		ReliabilityRating
+//		SecurityRating
+//		SqaleIndex
+//
+//  project  (required) project to produce bade for
+//  branch (optional) a long living branch
+//
+func (c *sonarcloudclient) GetMetric(metric int, project, branch string) (*http.Response, error) {
+	var url string
+	options := "?"
+	options += fmt.Sprintf(Metric, MetricName[metric])
+	options += fmt.Sprintf("&"+Project, project)
+	if branch != "" {
+		options += fmt.Sprintf("&"+Branch, branch)
+	}
+	url = c.URI + BadgeMetric + options
+
+	req, err := http.NewRequest("GET", url, nil)
+	resp, err := c.Client.Do(req)
+
+	if err != nil {
+		fmt.Println("Error is ", err)
+		return resp, err
+	}
+
+	return resp, nil
+}
+
+// GetQualityGate(project string) (*http.Response, error)
+// Return an SVG badge for inclusion in HTML
+// 	project (required) is a valid project name
+//
+func (c *sonarcloudclient) GetQualityGate(project string) (*http.Response, error) {
+	var url string
+	options := "?"
+	options += fmt.Sprintf(Project, project)
+	url = c.URI + QualityGate + options
 
 	req, err := http.NewRequest("GET", url, nil)
 	resp, err := c.Client.Do(req)

@@ -26,7 +26,10 @@ func TestMain(t *testing.T) {
 
 	// Setup the client
 	testClient = sonarcloudclient{}
-	testClient.New(token)
+	err := testClient.New(token)
+	if err != nil {
+		t.Errorf("Expected err to be nil Got %v\n", err)
+	}
 }
 
 // TestGetProject make sure we can retrive a project
@@ -184,6 +187,66 @@ func TestGetToken(t *testing.T) {
 	}
 	if !found {
 		t.Errorf("Expected " + tokenName + " not found\n")
+	}
+}
+
+// TestGetBadgeMetric test all possible metrics
+//
+func TestGetBadgeMetric(t *testing.T) {
+
+	metricList := []int{
+		Bugs,
+		CodeSmells,
+		Coverage,
+		DuplicatedLinesDensity,
+		Ncloc,
+		SqaleRating,
+		AlertStatus,
+		ReliabilityRating,
+		SecurityRating,
+		SqaleIndex,
+		Vulnerabilities,
+	}
+
+	branch := ""
+
+	for _, m := range metricList {
+		rsp, err := testClient.GetMetric(m, projectKey, branch)
+		if err != nil {
+			t.Errorf("Expected err to be nil Got %v\n", err)
+		}
+
+		checkResponseCode(t, http.StatusOK, rsp.StatusCode)
+
+		svg, err := ioutil.ReadAll(rsp.Body)
+		if err != nil {
+			t.Errorf("Expected err to be nil Got %v\n", err)
+		}
+		svgStr := string(svg)
+		if !strings.HasPrefix(svgStr, "<svg") {
+			t.Errorf("Expected string to start with svg Got %v\n", svgStr[0:3])
+		}
+	}
+}
+
+// TestGetQualityGate test all possible metrics
+//
+func TestGetQualityGate(t *testing.T) {
+
+	rsp, err := testClient.GetQualityGate(projectKey)
+	if err != nil {
+		t.Errorf("Expected err to be nil Got %v\n", err)
+	}
+
+	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
+
+	svg, err := ioutil.ReadAll(rsp.Body)
+	if err != nil {
+		t.Errorf("Expected err to be nil Got %v\n", err)
+	}
+	svgStr := string(svg)
+	if !strings.HasPrefix(svgStr, "<svg") {
+		t.Errorf("Expected string to start with svg Got %v\n", svgStr[0:3])
 	}
 }
 
