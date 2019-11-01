@@ -28,7 +28,7 @@ func TestMain(t *testing.T) {
 	testClient = sonarcloudclient{}
 	err := testClient.New(token)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 }
 
@@ -38,21 +38,21 @@ func TestGetProject(t *testing.T) {
 	x := projectKey
 	rsp, err := testClient.GetProject(orgname, x)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
 
 	project, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	var prj ProjectSearchResponse
 	err = json.Unmarshal(project, &prj)
 
 	if err != nil {
-		t.Errorf("Unmarshal failed Got %v\n", err)
+		t.Errorf(testMarshalFail, err)
 	}
 
 	if len(prj.Components) > 0 && prj.Components[0].Key != x {
@@ -72,7 +72,7 @@ func TestCreateProject(t *testing.T) {
 
 	rsp, err := testClient.CreateProject(p)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %s\n", err)
+		t.Errorf(testErrorMsg, err)
 		return
 	}
 
@@ -86,14 +86,14 @@ func TestCreateProject(t *testing.T) {
 
 	project, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	var prj NewProjectResponse
 	err = json.Unmarshal(project, &prj)
 
 	if err != nil {
-		t.Errorf("Unmarshal failed Got %v\n", err)
+		t.Errorf(testMarshalFail, err)
 	}
 
 	e := KeyPrefix + projectKey
@@ -107,7 +107,7 @@ func TestDeleteProject(t *testing.T) {
 	CreateProjectIfItDoesntExists(t)
 	rsp, err := testClient.DeleteProject(projectKey)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	checkResponseCode(t, http.StatusNoContent, rsp.StatusCode)
@@ -119,7 +119,7 @@ func TestCreateToken(t *testing.T) {
 
 	rsp, err := testClient.CreateToken(tokenName)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %s\n", err)
+		t.Errorf(testErrorMsg, err)
 		return
 	}
 
@@ -135,14 +135,14 @@ func TestCreateToken(t *testing.T) {
 	token, err := ioutil.ReadAll(rsp.Body)
 
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	var tk NewTokenResponse
 	err = json.Unmarshal(token, &tk)
 
 	if err != nil {
-		t.Errorf("Unmarshal failed Got %v\n", err)
+		t.Errorf(testMarshalFail, err)
 	}
 
 	if tk.Name != tokenName {
@@ -161,21 +161,21 @@ func TestGetToken(t *testing.T) {
 	loginName := ""
 	rsp, err := testClient.GetTokens(loginName)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
 
 	tkList, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	var tk GetTokenResponse
 	err = json.Unmarshal(tkList, &tk)
 
 	if err != nil {
-		t.Errorf("Unmarshal failed Got %v\n", err)
+		t.Errorf(testMarshalFail, err)
 	}
 
 	found := false
@@ -213,14 +213,14 @@ func TestGetBadgeMetric(t *testing.T) {
 	for _, m := range metricList {
 		rsp, err := testClient.GetMetric(m, projectKey, branch)
 		if err != nil {
-			t.Errorf("Expected err to be nil Got %v\n", err)
+			t.Errorf(testErrorMsg, err)
 		}
 
 		checkResponseCode(t, http.StatusOK, rsp.StatusCode)
 
 		svg, err := ioutil.ReadAll(rsp.Body)
 		if err != nil {
-			t.Errorf("Expected err to be nil Got %v\n", err)
+			t.Errorf(testErrorMsg, err)
 		}
 		svgStr := string(svg)
 		if !strings.HasPrefix(svgStr, "<svg") {
@@ -235,14 +235,14 @@ func TestGetQualityGate(t *testing.T) {
 
 	rsp, err := testClient.GetQualityGate(projectKey)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
 
 	svg, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 	svgStr := string(svg)
 	if !strings.HasPrefix(svgStr, "<svg") {
@@ -255,7 +255,7 @@ func TestRevokeToken(t *testing.T) {
 	CreateTokenIfItDoesntExists(t)
 	rsp, err := testClient.RevokeToken(tokenName)
 	if err != nil {
-		t.Errorf("Expected err to be nil Got %v\n", err)
+		t.Errorf(testErrorMsg, err)
 	}
 	checkResponseCode(t, http.StatusNoContent, rsp.StatusCode)
 }

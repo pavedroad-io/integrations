@@ -83,3 +83,12 @@ var MetricName = map[int]string{
 	9:  "sqale_index",
 	10: "vulnerabilities",
 }
+
+const (
+	testErrorMsg    = "Expected err to be nil Got %v\n"
+	testMarshalFail = "Unmarshal failed Got %v\n"
+	errorIs         = "Error is "
+	contentType     = "Content-Type"
+	contentLength   = "Content-Length"
+	wwwForm         = "application/x-www-form-urlencoded"
+)
