@@ -212,7 +212,7 @@ func (c *sonarcloudclient) GetProject(org, name string) (*http.Response, error) 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	resp, err := c.Client.Do(req)
@@ -244,7 +244,7 @@ func (c *sonarcloudclient) CreateProject(p NewProject) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	req.Header.Add(contentType, wwwForm)
@@ -277,7 +277,7 @@ func (c *sonarcloudclient) DeleteProject(p string) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	req.Header.Add(contentType, wwwForm)
@@ -308,7 +308,7 @@ func (c *sonarcloudclient) CreateToken(tn string) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	req.Header.Add(contentType, wwwForm)
@@ -339,7 +339,7 @@ func (c *sonarcloudclient) RevokeToken(tn string) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	req.Header.Add(contentType, wwwForm)
@@ -378,7 +378,7 @@ func (c *sonarcloudclient) GetTokens(name string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	resp, err := c.Client.Do(req)
@@ -422,7 +422,7 @@ func (c *sonarcloudclient) GetMetric(metric int, project, branch string) (*http.
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	resp, err := c.Client.Do(req)
@@ -448,7 +448,7 @@ func (c *sonarcloudclient) GetQualityGate(project string) (*http.Response, error
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println(errorIs, err)
-		return resp, err
+		return nil, err
 	}
 
 	resp, err := c.Client.Do(req)
