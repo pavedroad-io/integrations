@@ -165,8 +165,7 @@ type sonarCloudError struct {
 }
 
 func (e *sonarCloudError) Error() string {
-	msg := fmt.Sprintf("Err: %v, %v\n", e.errNumber, e.errMsg)
-	return msg
+	return fmt.Sprintf("Err: %v, %v\n", e.errNumber, e.errMsg)
 }
 
 // New(sondarcloudclient, token)
@@ -188,8 +187,8 @@ func (c *sonarcloudclient) New(token string) error {
 
 	if token == "" {
 		a := sonarCloudError{errNumber: -1, errMsg: "Token is require"}
-		fmt.Println(a.Error())
-		return nil
+		return &a
+		//		panic(a.Error())
 	}
 
 	c.Token = token
@@ -211,15 +210,13 @@ func (c *sonarcloudclient) GetProject(org, name string) (*http.Response, error) 
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	resp, err := c.Client.Do(req)
 
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return resp, err
+		return HandleHTTPClientError(resp, err)
 	}
 
 	return resp, nil
@@ -243,23 +240,22 @@ func (c *sonarcloudclient) CreateProject(p NewProject) (*http.Response, error) {
 	url := c.URI + ProjectCreate
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	req.Header.Add(contentType, wwwForm)
 	req.Header.Add(contentLength, strconv.Itoa(len(data.Encode())))
 	rsp, err := c.Client.Do(req)
 
+	if err != nil {
+		return HandleHTTPClientError(rsp, err)
+	}
+
 	if rsp.StatusCode == 400 {
 		errmsg, _ := ioutil.ReadAll(rsp.Body)
 		return rsp, errors.New(string(errmsg))
 	}
 
-	if err != nil {
-		fmt.Println(errorIs, err)
-		return rsp, err
-	}
 	return rsp, nil
 }
 
@@ -276,23 +272,22 @@ func (c *sonarcloudclient) DeleteProject(p string) (*http.Response, error) {
 	url := c.URI + ProjectDelete
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	req.Header.Add(contentType, wwwForm)
 	req.Header.Add(contentLength, strconv.Itoa(len(data.Encode())))
 	rsp, err := c.Client.Do(req)
 
+	if err != nil {
+		return HandleHTTPClientError(rsp, err)
+	}
+
 	if rsp.StatusCode == 400 {
 		errmsg, _ := ioutil.ReadAll(rsp.Body)
 		return rsp, errors.New(string(errmsg))
 	}
 
-	if err != nil {
-		fmt.Println(errorIs, err)
-		return rsp, err
-	}
 	return rsp, nil
 }
 
@@ -307,23 +302,21 @@ func (c *sonarcloudclient) CreateToken(tn string) (*http.Response, error) {
 	url := c.URI + TokenCreate
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	req.Header.Add(contentType, wwwForm)
 	req.Header.Add(contentLength, strconv.Itoa(len(data.Encode())))
 	rsp, err := c.Client.Do(req)
 
+	if err != nil {
+		return HandleHTTPClientError(rsp, err)
+	}
+
 	// return errmsg in the body as the error
 	if rsp.StatusCode == 400 {
 		errmsg, _ := ioutil.ReadAll(rsp.Body)
 		return rsp, errors.New(string(errmsg))
-	}
-
-	if err != nil {
-		fmt.Println(errorIs, err)
-		return rsp, err
 	}
 	return rsp, nil
 }
@@ -338,13 +331,17 @@ func (c *sonarcloudclient) RevokeToken(tn string) (*http.Response, error) {
 	url := c.URI + TokenRevoke
 	req, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	req.Header.Add(contentType, wwwForm)
 	req.Header.Add(contentLength, strconv.Itoa(len(data.Encode())))
 	rsp, err := c.Client.Do(req)
+
+	// There was a problem with the connection
+	if err != nil {
+		return HandleHTTPClientError(rsp, err)
+	}
 
 	// There was a problem with the payload
 	// return errmsg in the body as the error
@@ -353,11 +350,6 @@ func (c *sonarcloudclient) RevokeToken(tn string) (*http.Response, error) {
 		return rsp, errors.New(string(errmsg))
 	}
 
-	// There was a problem with the connection
-	if err != nil {
-		fmt.Println(errorIs, err)
-		return rsp, err
-	}
 	return rsp, nil
 }
 
@@ -377,15 +369,13 @@ func (c *sonarcloudclient) GetTokens(name string) (*http.Response, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	resp, err := c.Client.Do(req)
 
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return resp, err
+		return HandleHTTPClientError(resp, err)
 	}
 
 	return resp, nil
@@ -421,15 +411,13 @@ func (c *sonarcloudclient) GetMetric(metric int, project, branch string) (*http.
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	resp, err := c.Client.Do(req)
 
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return resp, err
+		return HandleHTTPClientError(resp, err)
 	}
 
 	return resp, nil
@@ -447,16 +435,21 @@ func (c *sonarcloudclient) GetQualityGate(project string) (*http.Response, error
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return nil, err
+		return HandleHTTPClientError(nil, err)
 	}
 
 	resp, err := c.Client.Do(req)
 
 	if err != nil {
-		fmt.Println(errorIs, err)
-		return resp, err
+		return HandleHTTPClientError(resp, err)
 	}
 
 	return resp, nil
+}
+
+// HandleHTTPClientError returns (*http.Response, error)
+// Prints error message and returns response and error
+func HandleHTTPClientError(rsp *http.Response, err error) (*http.Response, error) {
+	fmt.Println(errorIs, err)
+	return rsp, err
 }

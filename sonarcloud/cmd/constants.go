@@ -85,10 +85,11 @@ var MetricName = map[int]string{
 }
 
 const (
-	testErrorMsg    = "Expected err to be nil Got %v\n"
-	testMarshalFail = "Unmarshal failed Got %v\n"
-	errorIs         = "Error is "
-	contentType     = "Content-Type"
-	contentLength   = "Content-Length"
-	wwwForm         = "application/x-www-form-urlencoded"
+	testErrorMsg      = "Expected err to be nil Got %v\n"
+	testErrorMsgValue = "Expected err to be '%v' Got %v\n"
+	testMarshalFail   = "Unmarshal failed Got %v\n"
+	errorIs           = "Error is "
+	contentType       = "Content-Type"
+	contentLength     = "Content-Length"
+	wwwForm           = "application/x-www-form-urlencoded"
 )

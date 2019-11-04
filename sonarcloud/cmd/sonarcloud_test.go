@@ -2,6 +2,7 @@ package sonarcloud
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -12,6 +13,7 @@ import (
 )
 
 var testClient sonarcloudclient
+var fakeClient sonarcloudclient
 
 func TestMain(t *testing.T) {
 	var token string
@@ -26,9 +28,75 @@ func TestMain(t *testing.T) {
 
 	// Setup the client
 	testClient = sonarcloudclient{}
+
+	// client for talking to fake server listening on localhost
+	fakeClient = sonarcloudclient{
+		Host: "localhost",
+	}
+
 	err := testClient.New(token)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
+	}
+
+	err = fakeClient.New(token)
+	if err != nil {
+		t.Errorf(testErrorMsg, err)
+	}
+	fmt.Println(fakeClient)
+}
+
+// TestErrorMmsg handling
+func TestErrorMsg(t *testing.T) {
+	err := sonarCloudError{
+		errNumber: 100,
+		errMsg:    "test",
+	}
+
+	if err.Error() != "Err: 100, test\n" {
+		t.Errorf(testErrorMsg, err)
+	}
+}
+
+// TestClientDefaults
+func TestClientDefaults(t *testing.T) {
+	var nc = sonarcloudclient{}
+
+	nc.New("fake")
+
+	if nc.Host != DefaultHost {
+		t.Errorf(testErrorMsgValue, DefaultHost, nc.Host)
+	}
+
+	if nc.APIVersion != DefaultAPI {
+		t.Errorf(testErrorMsgValue, DefaultAPI, nc.APIVersion)
+	}
+}
+
+// TestNoToken
+func TestNoToken(t *testing.T) {
+	var nc = sonarcloudclient{}
+	expected := "Err: -1, Token is require\n"
+
+	err := nc.New("")
+
+	if err.Error() != expected {
+		t.Errorf(testErrorMsgValue, expected, err)
+	}
+}
+
+// TestConnectionError
+func TestConnectionError(t *testing.T) {
+	expected := "123456789"
+	rsp := &http.Response{}
+	err := errors.New(expected)
+
+	fmt.Println(rsp)
+
+	_, e := HandleHTTPClientError(rsp, err)
+
+	if e.Error() != expected {
+		t.Errorf(testErrorMsgValue, expected, err)
 	}
 }
 
@@ -39,6 +107,7 @@ func TestGetProject(t *testing.T) {
 	rsp, err := testClient.GetProject(orgname, x)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
+		return
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
@@ -108,6 +177,7 @@ func TestDeleteProject(t *testing.T) {
 	rsp, err := testClient.DeleteProject(projectKey)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
+		return
 	}
 
 	checkResponseCode(t, http.StatusNoContent, rsp.StatusCode)
@@ -162,6 +232,7 @@ func TestGetToken(t *testing.T) {
 	rsp, err := testClient.GetTokens(loginName)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
+		return
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
@@ -214,6 +285,7 @@ func TestGetBadgeMetric(t *testing.T) {
 		rsp, err := testClient.GetMetric(m, projectKey, branch)
 		if err != nil {
 			t.Errorf(testErrorMsg, err)
+			return
 		}
 
 		checkResponseCode(t, http.StatusOK, rsp.StatusCode)
@@ -236,6 +308,7 @@ func TestGetQualityGate(t *testing.T) {
 	rsp, err := testClient.GetQualityGate(projectKey)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
+		return
 	}
 
 	checkResponseCode(t, http.StatusOK, rsp.StatusCode)
