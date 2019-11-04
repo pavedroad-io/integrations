@@ -12,8 +12,8 @@ import (
 	"testing"
 )
 
-var testClient sonarcloudclient
-var fakeClient sonarcloudclient
+var testClient SonarCloudClient
+var fakeClient SonarCloudClient
 var badServer http.Server
 
 func TestMain(t *testing.T) {
@@ -28,10 +28,10 @@ func TestMain(t *testing.T) {
 	}
 
 	// Setup the client
-	testClient = sonarcloudclient{}
+	testClient = SonarCloudClient{}
 
 	// client for talking to fake server listening on badServerAddress
-	fakeClient = sonarcloudclient{
+	fakeClient = SonarCloudClient{
 		Host: badServerAddress,
 	}
 
@@ -61,7 +61,7 @@ func TestErrorMsg(t *testing.T) {
 
 // TestClientDefaults
 func TestClientDefaults(t *testing.T) {
-	var nc = sonarcloudclient{}
+	var nc = SonarCloudClient{}
 
 	nc.New("fake", 10)
 
@@ -76,7 +76,7 @@ func TestClientDefaults(t *testing.T) {
 
 // TestNoToken
 func TestNoToken(t *testing.T) {
-	var nc = sonarcloudclient{}
+	var nc = SonarCloudClient{}
 	expected := "Err: -1, Token is require\n"
 
 	err := nc.New("", 10)
