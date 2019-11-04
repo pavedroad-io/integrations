@@ -62,7 +62,6 @@ The New methods set standard defaults and also creates an HTTP client.
   }
 
   // Delete a project
-  CreateProjectIfItDoesntExists(t)
   rsp, err := testClient.DeleteProject(projectKey)
   if err != nil {
     t.Errorf("Expected err to be nil Got %v\n", err)
@@ -73,7 +72,6 @@ The New methods set standard defaults and also creates an HTTP client.
 
 ```go
   // Create a token
-
   rsp, err := testClient.CreateToken(tokenName)
   if err != nil {
     t.Errorf("Expected err to be nil Got %s\n", err)
@@ -108,22 +106,21 @@ The New methods set standard defaults and also creates an HTTP client.
 Returns SVG snip for including in HTML
 
 Valid metrics are:
-- Bugs,
--     CodeSmells,
--     Coverage,
--     DuplicatedLinesDensity,
--     Ncloc,
--     SqaleRating,
--     AlertStatus,
--     ReliabilityRating,
--     SecurityRating,
--     SqaleIndex
--     Vulnerabilities,
+- Bugs
+- CodeSmells
+- Coverage
+- DuplicatedLinesDensity
+- Ncloc
+- SqaleRating
+- AlertStatus
+- ReliabilityRating
+- SecurityRating
+- SqaleIndex
+- Vulnerabilities
 
 ```go
-
-  //Metric badges
-  rsp, err := testClient.GetMetric(m, projectKey, branch)
+  // Metric badges
+  rsp, err := testClient.GetMetric(metric, projectKey, branch)
   if err != nil {
     t.Errorf("Expected err to be nil Got %v\n", err)
   }
