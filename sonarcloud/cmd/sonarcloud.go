@@ -171,10 +171,10 @@ func (e *sonarCloudError) Error() string {
 // New(sondarcloudclient, token)
 //   token is a valid sonarcloud user token
 //	 if must have admin access
-func (c *sonarcloudclient) New(token string) error {
+func (c *sonarcloudclient) New(token string, timeoutSeconds int) error {
 
 	c.Client = &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: time.Duration(timeoutSeconds) * time.Second,
 	}
 
 	if c.Host == "" {
