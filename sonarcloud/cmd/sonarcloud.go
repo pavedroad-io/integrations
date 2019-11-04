@@ -101,9 +101,9 @@ type NewProjectResponseObject struct {
 	Visibility string `json:"visibility"`
 }
 
-// sonarcloudclient
+// SonarCloudClient
 //   type and methods used for accessing SonarCloud API
-type sonarcloudclient struct {
+type SonarCloudClient struct {
 	//   Client is an http.Client created when New() is called
 	Client *http.Client
 
@@ -171,10 +171,10 @@ func (e *sonarCloudError) Error() string {
 // New(sondarcloudclient, token)
 //   token is a valid sonarcloud user token
 //	 if must have admin access
-func (c *sonarcloudclient) New(token string) error {
+func (c *SonarCloudClient) New(token string, timeoutSeconds int) error {
 
 	c.Client = &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: time.Duration(timeoutSeconds) * time.Second,
 	}
 
 	if c.Host == "" {
@@ -201,7 +201,7 @@ func (c *sonarcloudclient) New(token string) error {
 
 // GetProject
 // TODO make this a vardic function taking a list of project names
-func (c *sonarcloudclient) GetProject(org, name string) (*http.Response, error) {
+func (c *SonarCloudClient) GetProject(org, name string) (*http.Response, error) {
 	options := "?"
 	options += fmt.Sprintf(Projects, name)
 	options += fmt.Sprintf("&"+Organization, org)
@@ -225,7 +225,7 @@ func (c *sonarcloudclient) GetProject(org, name string) (*http.Response, error) 
 // Create Project(Project)
 //   Create a new SonarCloud project usinig p
 //   Note SonarCloud expects application/x-www-form-urlencoded
-func (c *sonarcloudclient) CreateProject(p NewProject) (*http.Response, error) {
+func (c *SonarCloudClient) CreateProject(p NewProject) (*http.Response, error) {
 
 	data := url.Values{}
 	data.Set("name", p.Name)
@@ -262,7 +262,7 @@ func (c *sonarcloudclient) CreateProject(p NewProject) (*http.Response, error) {
 // Delete Project(projectKey)
 //   Delete a new SonarCloud project usinig p
 //   Note SonarCloud expects application/x-www-form-urlencoded
-func (c *sonarcloudclient) DeleteProject(p string) (*http.Response, error) {
+func (c *SonarCloudClient) DeleteProject(p string) (*http.Response, error) {
 
 	// Project names for none default organization are global
 	pk := KeyPrefix + p
@@ -294,7 +294,7 @@ func (c *sonarcloudclient) DeleteProject(p string) (*http.Response, error) {
 // Create Token(tn string)
 //   Create a new SonarCloud token with the name tn
 //   Note SonarCloud expects application/x-www-form-urlencoded
-func (c *sonarcloudclient) CreateToken(tn string) (*http.Response, error) {
+func (c *SonarCloudClient) CreateToken(tn string) (*http.Response, error) {
 
 	data := url.Values{}
 	data.Set("name", tn)
@@ -323,7 +323,7 @@ func (c *sonarcloudclient) CreateToken(tn string) (*http.Response, error) {
 
 // Revoke Token(tn string)
 //   Revoke a SonarCloud token with the name tn
-func (c *sonarcloudclient) RevokeToken(tn string) (*http.Response, error) {
+func (c *SonarCloudClient) RevokeToken(tn string) (*http.Response, error) {
 
 	data := url.Values{}
 	data.Set("name", tn)
@@ -357,7 +357,7 @@ func (c *sonarcloudclient) RevokeToken(tn string) (*http.Response, error) {
 // Return a list of tokens for the current user
 // or if login is specified use it
 //
-func (c *sonarcloudclient) GetTokens(name string) (*http.Response, error) {
+func (c *SonarCloudClient) GetTokens(name string) (*http.Response, error) {
 	var url string
 	if name != "" {
 		options := "?"
@@ -399,7 +399,7 @@ func (c *sonarcloudclient) GetTokens(name string) (*http.Response, error) {
 //  project  (required) project to produce bade for
 //  branch (optional) a long living branch
 //
-func (c *sonarcloudclient) GetMetric(metric int, project, branch string) (*http.Response, error) {
+func (c *SonarCloudClient) GetMetric(metric int, project, branch string) (*http.Response, error) {
 	var url string
 	options := "?"
 	options += fmt.Sprintf(Metric, MetricName[metric])
@@ -427,7 +427,7 @@ func (c *sonarcloudclient) GetMetric(metric int, project, branch string) (*http.
 // Return an SVG badge for inclusion in HTML
 // 	project (required) is a valid project name
 //
-func (c *sonarcloudclient) GetQualityGate(project string) (*http.Response, error) {
+func (c *SonarCloudClient) GetQualityGate(project string) (*http.Response, error) {
 	var url string
 	options := "?"
 	options += fmt.Sprintf(Project, project)

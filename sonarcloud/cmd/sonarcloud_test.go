@@ -12,8 +12,9 @@ import (
 	"testing"
 )
 
-var testClient sonarcloudclient
-var fakeClient sonarcloudclient
+var testClient SonarCloudClient
+var fakeClient SonarCloudClient
+var badServer http.Server
 
 func TestMain(t *testing.T) {
 	var token string
@@ -27,19 +28,19 @@ func TestMain(t *testing.T) {
 	}
 
 	// Setup the client
-	testClient = sonarcloudclient{}
+	testClient = SonarCloudClient{}
 
-	// client for talking to fake server listening on localhost
-	fakeClient = sonarcloudclient{
-		Host: "localhost",
+	// client for talking to fake server listening on badServerAddress
+	fakeClient = SonarCloudClient{
+		Host: badServerAddress,
 	}
 
-	err := testClient.New(token)
+	err := testClient.New(token, 10)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
 	}
 
-	err = fakeClient.New(token)
+	err = fakeClient.New(token, 1)
 	if err != nil {
 		t.Errorf(testErrorMsg, err)
 	}
@@ -60,9 +61,9 @@ func TestErrorMsg(t *testing.T) {
 
 // TestClientDefaults
 func TestClientDefaults(t *testing.T) {
-	var nc = sonarcloudclient{}
+	var nc = SonarCloudClient{}
 
-	nc.New("fake")
+	nc.New("fake", 10)
 
 	if nc.Host != DefaultHost {
 		t.Errorf(testErrorMsgValue, DefaultHost, nc.Host)
@@ -75,10 +76,10 @@ func TestClientDefaults(t *testing.T) {
 
 // TestNoToken
 func TestNoToken(t *testing.T) {
-	var nc = sonarcloudclient{}
+	var nc = SonarCloudClient{}
 	expected := "Err: -1, Token is require\n"
 
-	err := nc.New("")
+	err := nc.New("", 10)
 
 	if err.Error() != expected {
 		t.Errorf(testErrorMsgValue, expected, err)

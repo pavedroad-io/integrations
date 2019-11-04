@@ -47,11 +47,12 @@ const (
 	KeyPrefix = "PavedRoad_"
 
 	// Testing constants
-	projectKey  = "test123"
-	projectName = "Test project 123"
-	orgname     = "acme-demo"
-	visibility  = "public"
-	tokenName   = "userTestToken123"
+	projectKey       = "test123"
+	projectName      = "Test project 123"
+	orgname          = "acme-demo"
+	visibility       = "public"
+	tokenName        = "userTestToken123"
+	badServerAddress = "localhost:3000"
 )
 
 // Valid metric types
