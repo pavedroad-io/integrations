@@ -1,4 +1,4 @@
-# FOSSA Integration
+# Go Report Card Integration
 [![Go Report Card](https://goreportcard.com/badge/github.com/pavedroad-io/integrations)](https://goreportcard.com/report/github.com/pavedroad-io/integrations)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pavedroad-io_integrations&metric=alert_status)](https://sonarcloud.io/dashboard?id=pavedroad-io_integrations)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=pavedroad-io_integrations&metric=bugs)](https://sonarcloud.io/dashboard?id=pavedroad-io_integrations)
@@ -11,7 +11,7 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=pavedroad-io_integrations&metric=sqale_index)](https://sonarcloud.io/dashboard?id=pavedroad-io_integrations)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=pavedroad-io_integrations&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=pavedroad-io_integrations)
 
-# FOSSA
+# Go report card
 
-The fossa integation support generating badges that shows the current license scan results
+The goreportcard integation support generating badge for reports, HTML link, or markdown
 
