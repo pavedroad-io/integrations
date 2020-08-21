@@ -386,12 +386,22 @@ func (c *SonarCloudClient) GetTokens(name string) (*http.Response, error) {
 	return resp, nil
 }
 
+// NameToEnum return integer value of enum or -1 if not found
+func (c *SonarCloudClient) NameToEnum(name string) (enum int) {
+	for i, v := range MetricName {
+		if v == strings.ToLower(name) {
+			return i
+		}
+	}
+	return -1
+}
+
 // GetMetric return a badge for a given metric
 // example: GetMetric(metric, branch string)
 // Return an SVG badge for inclussion in HTML
 //
 // 	metric (required) is one of the following constants:
-//    Bugs
+//  	Bugs
 //		CodeSmells
 //		Coverage
 //		DuplicatedLinesDensity
@@ -429,7 +439,7 @@ func (c *SonarCloudClient) GetMetric(metric int, project, branch string) (*http.
 	return resp, nil
 }
 
-// GetQualityGate return bade for a SonarCloud quality gate
+// GetQualityGate return badge for a SonarCloud quality gate
 // example: GetQualityGate(project string) (*http.Response, error)
 // Return an SVG badge for inclusion in HTML
 // 	project (required) is a valid project name

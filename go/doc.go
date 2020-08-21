@@ -12,5 +12,5 @@ import (
 	Where badgeTypes is
 	- GoReport: link to online report
 	- GoHTMLLink: for embedding in HTML
-	- GoHTMLMarkdown: for embedding in md files
+	- GoMarkdown: for embedding in md files
 */
