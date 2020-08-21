@@ -12,6 +12,7 @@
 *.out
 *.un~
 .scannerwork
+*.swp
 builds
 
 *~
